@@ -4,6 +4,19 @@
 
 This is a plugin that brings protection against spam to CRS.
 
+Plugin aims to detect spam comments coming to your web site. It scans predefined
+GET/POST argument using Rspamd antispam software and, depending on the configuration,
+sending results of the scan to your application using environment variables and/or fully
+blocking the reuqest carring the spam data.
+
+When predefined GET/POST argument is detected in the request, plugin sets the following
+environment variables which can be accessed from your application:
+ * `crs_antispam_plugin_spam_flag` with value of `1` if data were marked as spam, `0` otherwise
+ * `crs_antispam_plugin_spam_score` with value of spam score (float) returned by Rspamd
+
+As Rspamd spam tests are adjusted for e-mails, only `BAYES` symbols are used i.e. you
+need to enable and configure Rspamd Statistical module for plugin to work.
+
 ## Prerequisities
 
  * ModSecurity compiled with Lua support
