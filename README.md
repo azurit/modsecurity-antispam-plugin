@@ -9,6 +9,7 @@ This is a plugin that brings protection against spam to CRS.
  * ModSecurity compiled with Lua support
  * LuaSocket library
  * LuaJSON library
+ * Working [Rspamd](https://rspamd.com/) instance with [Statistical module](https://rspamd.com/doc/configuration/statistic.html) enabled and configured
 
 ## LuaSocket library installation
 
@@ -75,6 +76,24 @@ You need to set port or rspamd.
 Default value: 11333
 
 ## Testing
+
+First of all, don't forget to set `tx.antispam-plugin_scan_argument` setting (it
+was set to `test` in the example below).
+
+Set up a testing script which will print all environment variables, for example `print_env.php`:  
+`<?php print_r($_ENV) ?>`
+
+Now use a [GTUBE-like patterns](https://rspamd.com/doc/gtube_patterns.html) to access this script:  
+`curl http://example.com/print_env.php --data 'test=XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X' | grep crs_`
+
+If everything is ok, you should see this output:
+```
+    [crs_antispam_plugin_spam_flag] => 1
+    [crs_antispam_plugin_spam_score] => 0
+```
+
+Note that `crs_antispam_plugin_spam_score` is `0`. This is because Rspamd is not
+adding any spam score for it's GTUBE-like patterns.
 
 ## License
 
