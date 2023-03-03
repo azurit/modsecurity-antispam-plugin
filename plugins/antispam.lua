@@ -15,7 +15,8 @@ function main(arg_name_to_scan)
 	args = m.getvars("ARGS", "none")
 	for key, arg in pairs(args) do
 		if arg_name_to_scan == string.sub(arg["name"], 6) then
-			data_to_scan = arg["value"]
+			-- Windows-style new line needs to be added at the beginning of the data to simulate empty SMTP headers as Rspamd is adjusted for e-mail traffic
+			data_to_scan = string.format([[\r\n%s]], arg["value"])
 			break
 		end
 	end
@@ -38,16 +39,34 @@ function main(arg_name_to_scan)
 		return nil
 	end
 	respbody_json = json.decode(table.concat(respbody))
-	m.setvar("tx.antispam-plugin_spam_score", respbody_json["score"])
-	if tonumber(m.getvar("tx.antispam-plugin_use_rspamd_threshold")) == 1 then
-		threshold = respbody_json["required_score"]
-	else
-		threshold = tonumber(m.getvar("tx.antispam-plugin_spam_threshold"))
+	local gtube = false
+	local gtube_action = nil
+	for key, value in pairs(respbody_json["symbols"]) do
+		if key == "GTUBE" then
+			gtube = true
+			gtube_action = respbody_json["action"]
+			break
+		end
 	end
-	if respbody_json["score"] >= threshold then
-		m.setvar("tx.antispam-plugin_spam_flag", "1")
+	if gtube == true then
+		m.setvar("tx.antispam-plugin_spam_score", 0)
+		if gtube_action == "no action" then
+			m.setvar("tx.antispam-plugin_spam_flag", "0")
+		else
+			m.setvar("tx.antispam-plugin_spam_flag", "1")
+		end
 	else
-		m.setvar("tx.antispam-plugin_spam_flag", "0")
+		m.setvar("tx.antispam-plugin_spam_score", respbody_json["score"])
+		if tonumber(m.getvar("tx.antispam-plugin_use_rspamd_threshold")) == 1 then
+			threshold = respbody_json["required_score"]
+		else
+			threshold = tonumber(m.getvar("tx.antispam-plugin_spam_threshold"))
+		end
+		if respbody_json["score"] >= threshold then
+			m.setvar("tx.antispam-plugin_spam_flag", "1")
+		else
+			m.setvar("tx.antispam-plugin_spam_flag", "0")
+		end
 	end
 	-- we need to return something for rule to trigger
 	return ""
