@@ -5,8 +5,8 @@
 This is a plugin that brings protection against spam to CRS.
 
 Plugin aims to detect spam comments coming to your web site. It scans predefined
-GET/POST argument using Rspamd antispam software and, depending on the configuration,
-sending results of the scan to your application using environment variables and/or fully
+GET/POST argument using [Rspamd](https://rspamd.com/) antispam software and, depending on the configuration,
+sending results of the scan to your application using environment variables or fully
 blocking the reuqest carring the spam data.
 
 When predefined GET/POST argument is detected in the request, plugin sets the following
