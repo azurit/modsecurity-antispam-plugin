@@ -1,4 +1,4 @@
-# OWASP ModSecurity Core Rule Set - Antispam Plugin
+# OWASP CRS - Antispam Plugin
 
 ## Description
 
@@ -110,8 +110,8 @@ adding any spam score for it's GTUBE-like patterns.
 
 ## License
 
-Copyright (c) 2023 OWASP ModSecurity Core Rule Set project. All rights reserved.
+Copyright (c) 2023-2024 OWASP Core Rule Set project. All rights reserved.
 
-The OWASP ModSecurity Core Rule Set and its official plugins are distributed
+The OWASP CRS and its official plugins are distributed
 under Apache Software License (ASL) version 2. Please see the enclosed LICENSE
 file for full details.
